@@ -1,5 +1,9 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Register ScrollTrigger explicitly inside the component module
+gsap.registerPlugin(ScrollTrigger);
 
 const projectsList = [
   {
@@ -57,25 +61,36 @@ export default function Projects() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.project-card', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
+      // Use fromTo to guarantee values are reset properly
+      gsap.fromTo('.project-card', 
+        {
+          y: 50,
+          opacity: 0
         },
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power2.out',
-      });
+        {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out'
+        }
+      );
     }, sectionRef);
+
+    // Refresh ScrollTrigger to recalculate DOM heights
+    ScrollTrigger.refresh();
 
     return () => ctx.revert();
   }, []);
 
   return (
     <section id="projects" ref={sectionRef} className="py-24 px-6 md:px-12 lg:px-24">
-      <h2 className="text-4xl md:text-5xl font-bold mb-16">
+      <h2 className="text-4xl md:text-5xl font-bold mb-16 text-white">
         <span className="text-accent">#</span> Projects
       </h2>
       
@@ -83,13 +98,13 @@ export default function Projects() {
         {projectsList.map((project, i) => (
           <div 
             key={i} 
-            className="project-card flex flex-col justify-between group p-8 rounded-3xl bg-white/[0.02] backdrop-blur-md border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] hover:bg-white/[0.06] hover:border-accent/40 hover:shadow-[0_8px_32px_0_rgba(168,85,247,0.1)] transition-all duration-300 relative overflow-hidden"
+            className="project-card flex flex-col justify-between group p-8 rounded-3xl bg-gray-900/20 backdrop-blur-md border border-gray-800/80 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] hover:bg-gray-800/30 hover:border-accent/40 hover:shadow-[0_8px_32px_0_rgba(168,85,247,0.1)] transition-all duration-300 relative overflow-hidden"
           >
-            {/* Glossy top reflection effect */}
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            {/* Subtle top glare for glassmorphic effect */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
             
             <div>
-              <h3 className="text-2xl font-bold mb-1 group-hover:text-accent-secondary transition-colors duration-300">
+              <h3 className="text-2xl font-bold mb-1 group-hover:text-accent-secondary transition-colors duration-300 text-white">
                 {project.title}
               </h3>
               <p className="text-sm font-medium text-accent mb-4">
