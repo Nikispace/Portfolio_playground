@@ -6,12 +6,12 @@ export default function About() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.about-card', {
+      gsap.from('.about-content', {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
         },
-        y: 100,
+        y: 60,
         opacity: 0,
         duration: 1,
         stagger: 0.2,
@@ -23,36 +23,27 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="min-h-screen w-full py-24 px-8 md:px-24 flex flex-col justify-center">
-      <h2 className="text-4xl md:text-5xl font-bold mb-16"><span className="text-accent">#</span> About Me</h2>
+    <section id="about" ref={sectionRef} className="py-24 px-6 md:px-12 lg:px-24">
+      <h2 className="text-4xl md:text-5xl font-bold mb-12"><span className="text-accent">#</span> About</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="about-card bg-gray-900/40 p-8 rounded-3xl border border-gray-800 backdrop-blur-sm hover:border-gray-600 transition-colors group">
-          <h3 className="text-2xl font-semibold mb-4 text-accent-secondary">The Journey</h3>
-          <p className="text-textSecondary leading-relaxed text-lg">
-            I'm a beginner-to-intermediate coder and Python intern with a passion for learning AI & data science. 
-            I enjoy transforming complex data into meaningful insights and building tools that make a difference. 
-            My workflow often involves VS Code, Google Colab, ComfyUI, and GitHub.
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="about-content text-textSecondary text-lg leading-relaxed flex flex-col gap-6">
+          <p>
+            I’m <span className="text-white font-medium">Nikitha</span> from Chennai, doing a mix of B.E. CSE at Velammal Institute of Technology and B.S. in Data Science Applications at IIT Madras. Most of my ideas start as <span className="text-accent-secondary italic">“what if I try this once?”</span> and then slowly turn into tiny projects that keep evolving.
+          </p>
+          <p>
+            I like building small Python scripts, data experiments, and AI-powered workflows that actually solve some problem in my day, even if it’s a very tiny one. When I’m not debugging, I’m usually writing, clicking photos, or planning my next web or AI experiment.
+          </p>
+          <p>
+            I’m still early in my journey, so this portfolio is more like a live lab: things break, improve, and get redesigned as I learn.
           </p>
         </div>
 
-        <div className="flex flex-col gap-6">
-          <div className="about-card bg-gray-900/40 p-6 rounded-3xl border border-gray-800 backdrop-blur-sm hover:border-gray-600 transition-all transform hover:-translate-y-1">
-            <h4 className="text-accent font-medium mb-1">Education</h4>
-            <p className="text-lg">IIT Madras - Foundation in Data Science & Programming</p>
-            <span className="text-sm text-textSecondary">In Progress</span>
-          </div>
-
-          <div className="about-card bg-gray-900/40 p-6 rounded-3xl border border-gray-800 backdrop-blur-sm hover:border-gray-600 transition-all transform hover:-translate-y-1">
-            <h4 className="text-accent font-medium mb-1">Experience</h4>
-            <p className="text-lg">Python Programming Intern at Decodelabs</p>
-            <span className="text-sm text-textSecondary">Building robust scripts and data pipelines</span>
-          </div>
-
-          <div className="about-card bg-gray-900/40 p-6 rounded-3xl border border-gray-800 backdrop-blur-sm hover:border-gray-600 transition-all transform hover:-translate-y-1">
-            <h4 className="text-accent font-medium mb-1">Self-Learning</h4>
-            <p className="text-lg">Building small projects & experimenting with AI tools</p>
-            <span className="text-sm text-textSecondary">Exploring ComfyUI and GenAI concepts</span>
+        {/* Optional illustration / visual block */}
+        <div className="about-content hidden lg:flex justify-center items-center">
+          <div className="w-64 h-64 rounded-full border-2 border-gray-800 bg-gray-900/50 flex items-center justify-center relative shadow-[0_0_50px_rgba(168,85,247,0.1)]">
+            <span className="text-6xl opacity-50">✨</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-accent/20 to-accent-secondary/20 rounded-full blur-xl -z-10" />
           </div>
         </div>
       </div>

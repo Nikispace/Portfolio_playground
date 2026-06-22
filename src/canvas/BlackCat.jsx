@@ -1,103 +1,168 @@
-import { useRef, useState } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import { useScroll } from '@react-three/drei';
+import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 export default function BlackCat(props) {
-  const catRef = useRef();
-  const headRef = useRef();
-  const { viewport, mouse } = useThree();
+  const headGroup = useRef();
+  const leftEyeGroup = useRef();
+  const rightEyeGroup = useRef();
+  const leftLid = useRef();
+  const rightLid = useRef();
   
-  // Custom material for the cat (shiny black)
-  const catMaterial = new THREE.MeshStandardMaterial({
+  // Materials
+  // Faceted, high-contrast dark material for the low-poly head
+  const headMaterial = new THREE.MeshStandardMaterial({
     color: '#0a0a0a',
-    roughness: 0.2,
-    metalness: 0.8,
+    roughness: 0.4,
+    metalness: 0.5,
+    flatShading: true, // Creates the faceted/geometric look
   });
 
-  // Emissive material for the eyes
-  const eyeMaterial = new THREE.MeshStandardMaterial({
-    color: '#a855f7', // accent purple
-    emissive: '#a855f7',
+  // Base eyeball (sclera/shadow)
+  const eyeBaseMaterial = new THREE.MeshStandardMaterial({
+    color: '#050505',
+    roughness: 0.8,
+    flatShading: true,
+  });
+
+  // Golden glowing iris
+  const irisMaterial = new THREE.MeshStandardMaterial({
+    color: '#fbbf24', // Amber/Gold
+    emissive: '#d97706',
     emissiveIntensity: 2,
-    toneMapped: false
+    toneMapped: false,
+    flatShading: true,
   });
 
-  useFrame((state, delta) => {
-    // Scroll-based Parallax & Rotation
-    // Scroll ranges from 0 to 1 based on page scroll
-    const scrollY = window.scrollY;
-    
-    // Float animation
-    const t = state.clock.getElapsedTime();
-    catRef.current.position.y = Math.sin(t * 2) * 0.1;
-    
-    // Smoothly rotate the whole cat based on scroll
-    const targetRotationY = (scrollY * 0.002);
-    catRef.current.rotation.y = THREE.MathUtils.lerp(catRef.current.rotation.y, targetRotationY, 0.05);
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
 
-    // Head tracking the mouse cursor
-    // Calculate target lookAt position based on mouse
-    const targetX = (mouse.x * viewport.width) / 2;
-    const targetY = (mouse.y * viewport.height) / 2;
+    // 1. Idle Motion (Breathing)
+    // Subtle vertical bob and pitch rotation
+    headGroup.current.position.y = Math.sin(time * 1.5) * 0.03;
+    headGroup.current.rotation.x = Math.sin(time * 1.2) * 0.02;
+
+    // 2. Eye Tracking (Cursor)
+    // Map normalized mouse (-1 to 1) to constrained rotation angles
+    // Max horizontal: ~15 deg (0.26 rad), Max vertical: ~10 deg (0.17 rad)
+    const targetRotX = THREE.MathUtils.clamp(-state.mouse.y * 0.3, -0.17, 0.17);
+    const targetRotY = THREE.MathUtils.clamp(state.mouse.x * 0.4, -0.26, 0.26);
+
+    // Smoothly interpolate eye rotation
+    leftEyeGroup.current.rotation.x = THREE.MathUtils.lerp(leftEyeGroup.current.rotation.x, targetRotX, 0.1);
+    leftEyeGroup.current.rotation.y = THREE.MathUtils.lerp(leftEyeGroup.current.rotation.y, targetRotY, 0.1);
     
-    // Smoothly rotate head towards mouse
-    headRef.current.rotation.y = THREE.MathUtils.lerp(headRef.current.rotation.y, mouse.x * 0.5, 0.1);
-    headRef.current.rotation.x = THREE.MathUtils.lerp(headRef.current.rotation.x, -mouse.y * 0.5, 0.1);
+    rightEyeGroup.current.rotation.x = THREE.MathUtils.lerp(rightEyeGroup.current.rotation.x, targetRotX, 0.1);
+    rightEyeGroup.current.rotation.y = THREE.MathUtils.lerp(rightEyeGroup.current.rotation.y, targetRotY, 0.1);
+
+    // 3. Blinking Mechanic
+    // Blink every ~4 seconds
+    const blinkCycle = time % 4;
+    // When blinkCycle is between 3.8 and 3.9, close lids
+    if (blinkCycle > 3.8 && blinkCycle < 3.95) {
+      leftLid.current.scale.y = THREE.MathUtils.lerp(leftLid.current.scale.y, 0, 0.4);
+      rightLid.current.scale.y = THREE.MathUtils.lerp(rightLid.current.scale.y, 0, 0.4);
+    } else {
+      leftLid.current.scale.y = THREE.MathUtils.lerp(leftLid.current.scale.y, 1, 0.2);
+      rightLid.current.scale.y = THREE.MathUtils.lerp(rightLid.current.scale.y, 1, 0.2);
+    }
   });
 
   return (
-    <group ref={catRef} {...props} dispose={null}>
-      {/* Body */}
-      <mesh material={catMaterial} position={[0, -1, 0]}>
-        <capsuleGeometry args={[0.6, 1.2, 4, 16]} />
-      </mesh>
+    <group {...props} dispose={null}>
+      <group ref={headGroup} position={[0, -0.2, 0]}>
+        
+        {/* --- GEOMETRIC HEAD --- */}
+        {/* Main upper skull (Icosahedron for low-poly facets) */}
+        <mesh material={headMaterial} position={[0, 0, 0]}>
+          <icosahedronGeometry args={[1, 1]} />
+        </mesh>
 
-      {/* Head Group */}
-      <group ref={headRef} position={[0, 0.5, 0.2]}>
-        {/* Head Base */}
-        <mesh material={catMaterial}>
-          <sphereGeometry args={[0.7, 32, 32]} />
+        {/* Snout/Muzzle */}
+        <mesh material={headMaterial} position={[0, -0.4, 0.8]} rotation={[-0.2, 0, 0]}>
+          <coneGeometry args={[0.5, 0.8, 4]} />
         </mesh>
         
+        {/* Lower Jaw */}
+        <mesh material={headMaterial} position={[0, -0.7, 0.6]} rotation={[0.4, 0, 0]}>
+          <coneGeometry args={[0.4, 0.5, 4]} />
+        </mesh>
+
+        {/* Cheeks */}
+        <mesh material={headMaterial} position={[-0.6, -0.2, 0.4]} rotation={[0, 0.2, 0.4]}>
+          <tetrahedronGeometry args={[0.6]} />
+        </mesh>
+        <mesh material={headMaterial} position={[0.6, -0.2, 0.4]} rotation={[0, -0.2, -0.4]}>
+          <tetrahedronGeometry args={[0.6]} />
+        </mesh>
+
         {/* Left Ear */}
-        <mesh material={catMaterial} position={[-0.4, 0.5, 0]} rotation={[0, 0, 0.3]}>
-          <coneGeometry args={[0.2, 0.6, 16]} />
+        <mesh material={headMaterial} position={[-0.6, 0.8, -0.2]} rotation={[0.1, 0.2, 0.3]}>
+          <coneGeometry args={[0.4, 1.2, 3]} />
         </mesh>
-        
+
         {/* Right Ear */}
-        <mesh material={catMaterial} position={[0.4, 0.5, 0]} rotation={[0, 0, -0.3]}>
-          <coneGeometry args={[0.2, 0.6, 16]} />
+        <mesh material={headMaterial} position={[0.6, 0.8, -0.2]} rotation={[0.1, -0.2, -0.3]}>
+          <coneGeometry args={[0.4, 1.2, 3]} />
         </mesh>
 
-        {/* Left Eye */}
-        <mesh material={eyeMaterial} position={[-0.3, 0.1, 0.65]} rotation={[0, -0.2, 0]}>
-          <sphereGeometry args={[0.12, 16, 16]} />
-        </mesh>
-        
-        {/* Right Eye */}
-        <mesh material={eyeMaterial} position={[0.3, 0.1, 0.65]} rotation={[0, 0.2, 0]}>
-          <sphereGeometry args={[0.12, 16, 16]} />
+        {/* Tiny geometric nose tip */}
+        <mesh position={[0, -0.4, 1.22]} rotation={[0.4, 0, 0]}>
+          <tetrahedronGeometry args={[0.1]} />
+          <meshStandardMaterial color="#222" flatShading />
         </mesh>
 
-        {/* Nose */}
-        <mesh position={[0, -0.1, 0.7]}>
-          <sphereGeometry args={[0.08, 16, 16]} />
-          <meshStandardMaterial color="#1a1a1a" />
-        </mesh>
+
+        {/* --- EYES --- */}
+        {/* Left Eye Socket Context */}
+        <group position={[-0.4, 0.1, 0.75]}>
+          {/* Eye tracking group */}
+          <group ref={leftEyeGroup}>
+            {/* Dark Eyeball Base */}
+            <mesh material={eyeBaseMaterial}>
+              <sphereGeometry args={[0.22, 16, 16]} />
+            </mesh>
+            {/* Golden Iris (protrudes slightly forward) */}
+            <mesh material={irisMaterial} position={[0, 0, 0.18]} rotation={[Math.PI/2, 0, 0]}>
+              <cylinderGeometry args={[0.12, 0.12, 0.05, 16]} />
+            </mesh>
+            {/* Dark Vertical Pupil */}
+            <mesh position={[0, 0, 0.21]} rotation={[Math.PI/2, 0, 0]}>
+              <cylinderGeometry args={[0.03, 0.03, 0.05, 8]} />
+              <meshBasicMaterial color="#000" />
+            </mesh>
+          </group>
+          {/* Blinking Lid (scales Y to hide eye) */}
+          <mesh ref={leftLid}>
+            {/* A slightly larger black sphere with an open front, scaled to simulate lids */}
+            <sphereGeometry args={[0.24, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color="#0a0a0a" flatShading side={THREE.DoubleSide} />
+          </mesh>
+        </group>
+
+        {/* Right Eye Socket Context */}
+        <group position={[0.4, 0.1, 0.75]}>
+          {/* Eye tracking group */}
+          <group ref={rightEyeGroup}>
+            <mesh material={eyeBaseMaterial}>
+              <sphereGeometry args={[0.22, 16, 16]} />
+            </mesh>
+            <mesh material={irisMaterial} position={[0, 0, 0.18]} rotation={[Math.PI/2, 0, 0]}>
+              <cylinderGeometry args={[0.12, 0.12, 0.05, 16]} />
+            </mesh>
+            <mesh position={[0, 0, 0.21]} rotation={[Math.PI/2, 0, 0]}>
+              <cylinderGeometry args={[0.03, 0.03, 0.05, 8]} />
+              <meshBasicMaterial color="#000" />
+            </mesh>
+          </group>
+          {/* Blinking Lid */}
+          <mesh ref={rightLid}>
+            <sphereGeometry args={[0.24, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color="#0a0a0a" flatShading side={THREE.DoubleSide} />
+          </mesh>
+        </group>
+
       </group>
-
-      {/* Floating platform/cube the cat sits on */}
-      <mesh position={[0, -1.8, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[1.5, 1.2, 0.2, 32]} />
-        <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
-      </mesh>
-      
-      {/* Platform glow ring */}
-      <mesh position={[0, -1.7, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.6, 1.65, 64]} />
-        <meshBasicMaterial color="#2dd4bf" transparent opacity={0.5} />
-      </mesh>
     </group>
   );
 }
