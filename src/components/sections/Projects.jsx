@@ -3,52 +3,52 @@ import gsap from 'gsap';
 
 const projectsList = [
   {
+    title: "General Quiz Portal",
+    tagline: "Dynamic quiz platform for active learning.",
+    description: "An interactive web-based portal to take quizzes, track performance, and practice knowledge. Built with a clean interface, dynamic question serving, and automated scoring.",
+    tags: ["HTML", "CSS", "JavaScript", "Quiz"],
+    linkText: "View Repository",
+    linkUrl: "https://github.com/Nikispace/General_quiz_portal"
+  },
+  {
+    title: "Olone AI Study Packages Game",
+    tagline: "Gamified learning powered by educational modules.",
+    description: "An engaging study package game designed to make learning interactive and gamified. Integrates conceptual study materials with gaming elements for a highly retentive experience.",
+    tags: ["Game Dev", "AI Study", "HTML/CSS", "JavaScript"],
+    linkText: "Play Game",
+    linkUrl: "https://github.com/Nikispace/Olone_Ai_Study_Packages_game"
+  },
+  {
+    title: "QR‑Driven Menu Display",
+    tagline: "Scan, tap, and browse menus on your phone.",
+    description: "A static, mobile-first web page that displays a digital menu when scanning a QR code. Optimized for quick loading on mobile browsers with a beautiful, clean layout.",
+    tags: ["HTML", "CSS", "JavaScript", "Mobile-First"],
+    linkText: "View Repository",
+    linkUrl: "https://github.com/Nikispace/QR-driven-menu-display"
+  },
+  {
     title: "To‑Do List Manager",
-    tagline: "A tiny terminal app to dump your brain into tasks.",
-    description: "A console-based to‑do list where you can add tasks, see what’s pending, and remove things once you’re done. Built with Python and basic date/time logic, focused on clear prompts and structure.",
-    tags: ["Python", "Console", "Productivity"],
-    linkText: "View code",
+    tagline: "Organize your tasks efficiently in the console.",
+    description: "A terminal-based productivity tool to manage tasks, schedule todo items, and monitor completion status. Developed during DecodeLabs internship to demonstrate clean Python script execution.",
+    tags: ["Python", "CLI", "Internship Task"],
+    linkText: "View Code",
     linkUrl: "https://github.com/Nikispace/Decodelabs-internship/blob/main/TASK-1-Nikitha%20M"
   },
   {
     title: "Expense Tracker",
-    tagline: "Because “where did my money go?” shouldn’t be a mystery.",
-    description: "A console-based expense tracker to log expenses by category, set limits, and view weekly and monthly summaries. Written in Python with a menu-driven flow and simple reports to spot spending patterns.",
-    tags: ["Python", "Console", "Data"],
-    linkText: "View code",
+    tagline: "Personal finance and budget analytics made simple.",
+    description: "A menu-driven console application to log expenses by category, analyze weekly/monthly spending patterns, and set limits. Built as a task during DecodeLabs internship.",
+    tags: ["Python", "Finance", "Internship Task"],
+    linkText: "View Code",
     linkUrl: "https://github.com/Nikispace/Decodelabs-internship/blob/main/TASK-2-Nikitha%20M"
   },
   {
     title: "Random Password Generator",
-    tagline: "You pick the rules. It spits out chaos.",
-    description: "A retro-style Tkinter app that generates passwords based on length and character types, with a simple strength indicator. Built to practise GUI programming and user-friendly design in Python.",
+    tagline: "Secure, custom password creation GUI.",
+    description: "A GUI application built with Python and Tkinter that generates strong, customizable passwords. Includes character selections, length adjustments, and password strength indicators.",
     tags: ["Python", "Tkinter", "Security"],
-    linkText: "View code",
+    linkText: "View Code",
     linkUrl: "https://github.com/Nikispace/Decodelabs-internship/blob/main/Random%20password%20generator%20using%20python.py"
-  },
-  {
-    title: "Quiz Generator",
-    tagline: "Practice mode for your brain, powered by Python.",
-    description: "An in-progress quiz generator that will serve questions from a small question bank, track scores, and give simple feedback. Starting as a console app, with room to grow into a GUI or web version.",
-    tags: ["Python", "Console"],
-    linkText: "Details",
-    linkUrl: "#" // placeholder
-  },
-  {
-    title: "Personal Portfolio Website",
-    tagline: "This website… about this website.",
-    description: "A fresh HTML/CSS/JS portfolio to bring my projects, achievements, and creative work into one place. Responsive, with light/dark modes and room for future scroll animations and typography experiments.",
-    tags: ["HTML", "CSS", "JavaScript", "GitHub Pages"],
-    linkText: "View code",
-    linkUrl: "https://github.com/Nikispace/portfolio" // Updated with a plausible repo if available
-  },
-  {
-    title: "QR‑Driven Menu Display",
-    tagline: "Scan, tap, read. No laminated menus required.",
-    description: "A static, mobile-first web page that shows a digital menu when someone scans a QR code. Designed for quick reading on phones without extra clicks or clutter.",
-    tags: ["HTML", "CSS", "JavaScript"],
-    linkText: "View code",
-    linkUrl: "https://github.com/Nikispace/QR-driven-menu-display"
   }
 ];
 
@@ -75,24 +75,38 @@ export default function Projects() {
 
   return (
     <section id="projects" ref={sectionRef} className="py-24 px-6 md:px-12 lg:px-24">
-      <h2 className="text-4xl md:text-5xl font-bold mb-16"><span className="text-accent">#</span> Projects</h2>
+      <h2 className="text-4xl md:text-5xl font-bold mb-16">
+        <span className="text-accent">#</span> Projects
+      </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {projectsList.map((project, i) => (
           <div 
             key={i} 
-            className="project-card flex flex-col justify-between group p-8 rounded-3xl bg-gray-900/30 border border-gray-800 hover:bg-gray-800/40 hover:border-accent/50 transition-all duration-300 relative overflow-hidden"
+            className="project-card flex flex-col justify-between group p-8 rounded-3xl bg-white/[0.02] backdrop-blur-md border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] hover:bg-white/[0.06] hover:border-accent/40 hover:shadow-[0_8px_32px_0_rgba(168,85,247,0.1)] transition-all duration-300 relative overflow-hidden"
           >
+            {/* Glossy top reflection effect */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            
             <div>
-              <h3 className="text-2xl font-bold mb-1 group-hover:text-accent-secondary transition-colors">{project.title}</h3>
-              <p className="text-sm font-medium text-accent mb-4">{project.tagline}</p>
-              <p className="text-textSecondary mb-8 text-base leading-relaxed">{project.description}</p>
+              <h3 className="text-2xl font-bold mb-1 group-hover:text-accent-secondary transition-colors duration-300">
+                {project.title}
+              </h3>
+              <p className="text-sm font-medium text-accent mb-4">
+                {project.tagline}
+              </p>
+              <p className="text-textSecondary mb-8 text-base leading-relaxed">
+                {project.description}
+              </p>
             </div>
             
             <div className="flex flex-col gap-6 mt-auto">
               <div className="flex flex-wrap gap-2">
                 {project.tags.map(tag => (
-                  <span key={tag} className="text-xs px-3 py-1 bg-black/50 rounded-full text-gray-300 border border-gray-700">
+                  <span 
+                    key={tag} 
+                    className="text-xs px-3 py-1 bg-black/40 backdrop-blur-sm rounded-full text-gray-300 border border-white/[0.05]"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -102,7 +116,7 @@ export default function Projects() {
                   href={project.linkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-5 py-2 text-sm font-semibold bg-white text-bg rounded-full hover:bg-accent hover:text-white transition-colors"
+                  className="inline-block px-5 py-2 text-sm font-semibold bg-white text-bg rounded-full hover:bg-accent hover:text-white hover:scale-105 transform transition-all duration-300"
                 >
                   {project.linkText}
                 </a>
