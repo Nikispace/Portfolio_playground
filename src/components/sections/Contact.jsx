@@ -29,8 +29,21 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logic for form submission goes here
-    alert("Thanks for reaching out! (Form UI ready)");
+    const { name, email, message } = formData;
+    
+    const subject = encodeURIComponent(`Portfolio Contact: ${name}`);
+    const body = encodeURIComponent(
+      `Hello Nikitha,\n\nYou have received a new message from your portfolio website contact form.\n\n` +
+      `Sender Name: ${name}\n` +
+      `Sender Email: ${email}\n\n` +
+      `Message:\n${message}`
+    );
+    
+    // Open the user's default email client
+    window.location.href = `mailto:nikithanagami@gmail.com?subject=${subject}&body=${body}`;
+    
+    // Reset the form
+    setFormData({ name: '', email: '', message: '' });
   };
 
   return (
